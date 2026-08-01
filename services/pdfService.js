@@ -8,13 +8,15 @@ async function generatePdfFromHtml(htmlContent) {
     chromium.setHeadlessMode = true;
     chromium.setGraphicsMode = false;
 
-    // Get the Chromium binary executable path safely
-    const executablePath = await chromium.executablePath();
+    // THE FIX I ACCIDENTALLY REMOVED: Safely get the Chromium path
+    const execPath = typeof chromium.executablePath === 'function' 
+      ? await chromium.executablePath() 
+      : await chromium.executablePath;
 
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath,
+      executablePath: execPath,
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });

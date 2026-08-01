@@ -8,12 +8,15 @@ async function getBrowser() {
   chromium.setHeadlessMode = true;
   chromium.setGraphicsMode = false;
 
-  const executablePath = await chromium.executablePath();
+  // THE FIX I ACCIDENTALLY REMOVED: Safely get the Chromium path
+  const execPath = typeof chromium.executablePath === 'function' 
+    ? await chromium.executablePath() 
+    : await chromium.executablePath;
 
   return await puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
-    executablePath: executablePath,
+    executablePath: execPath,
     headless: chromium.headless,
     ignoreHTTPSErrors: true,
   });
