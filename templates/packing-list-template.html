@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>PACKING LIST</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    html,
+    body {
+      width: 210mm;
+      height: 297mm;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #000000;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 8.5pt;
+      line-height: 1.15;
+    }
+
+    .invoice-page {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto;
+      padding: 4mm;
+      overflow: hidden;
+      background: #ffffff;
+      color: #000000;
+      box-sizing: border-box;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0;
+      table-layout: fixed;
+      margin: 0;
+    }
+
+    th,
+    td {
+      border: 1px solid #000000;
+      padding: 0.8mm 1.2mm;
+      vertical-align: top;
+      box-sizing: border-box;
+      font-size: 8.5pt;
+      line-height: 1.15;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+    .text-right { text-align: right; }
+    .bold { font-weight: bold; }
+    .pre-line { white-space: pre-line; }
+    .align-top { vertical-align: top; }
+
+    /* 1. Unbordered Header Section */
+    .brand-header {
+      margin-bottom: 2mm;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .brand-header td {
+      border: none !important;
+      padding: 0;
+      vertical-align: bottom;
+    }
+
+    .logo-img {
+      max-height: 52px;
+      width: auto;
+      display: block;
+    }
+
+    .corporate-info {
+      width: 200px;
+      text-align: left;
+      font-size: 7.8pt;
+      line-height: 1.25;
+      color: #000000;
+    }
+
+    .orange-accent-bar {
+      width: 14px;
+      height: 48px;
+      background-color: #e57c1e;
+      float: right;
+      display: block;
+    }
+
+    /* Single Master Table */
+    .master-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #000000;
+    }
+
+    .title-cell {
+      text-align: center;
+      font-weight: bold;
+      font-size: 9.5pt;
+      letter-spacing: 0.5px;
+      padding: 1.2mm;
+    }
+
+    .section-label {
+      font-weight: bold;
+      font-size: 9pt;
+      border-bottom: 1px solid #000000;
+      margin-bottom: 1mm;
+      padding-bottom: 0.5mm;
+    }
+
+    .details-inner-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+    }
+
+    .details-inner-table td {
+      border: none;
+      padding: 0.8mm 1mm;
+      font-size: 8.5pt;
+    }
+
+    .details-inner-table td:first-child {
+      border-right: 1px solid #000000;
+    }
+
+    .nowrap-cell {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .second-notify-row {
+      display: flex;
+      justify-content: flex-start;
+      gap: 2mm;
+      font-size: 8pt;
+      margin-top: 1mm;
+    }
+
+    /* Product Table Column Widths */
+    .col-pkg { width: 14%; }
+    .col-desc { width: 36%; }
+    .col-qty { width: 10%; }
+    .col-unit { width: 10%; }
+    .col-netwt { width: 15%; }
+    .col-grosswt { width: 15%; }
+
+    .product-header th {
+      font-weight: bold;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 8.5pt;
+      padding: 0.8mm;
+    }
+
+    .product-row td {
+      padding: 0.8mm;
+      font-size: 8.5pt;
+      border-top: none !important;
+      border-bottom: none !important;
+      border-left: 1px solid #000000 !important;
+      border-right: 1px solid #000000 !important;
+      height: 4.5mm;
+    }
+
+    .declaration-cell {
+      font-size: 7.5pt;
+      line-height: 1.2;
+      padding: 1.2mm 1.5mm;
+    }
+
+    .dec-bold-header {
+      font-weight: normal;
+      font-size: 7pt;
+      line-height: 1.2;
+      margin-bottom: 1mm;
+    }
+
+    .signature-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 85px;
+      text-align: center;
+      padding: 1mm 0 0 0;
+    }
+
+    .signature-company-title {
+      font-weight: bold;
+      font-size: 8.5pt;
+      text-transform: uppercase;
+      padding: 0 1mm;
+    }
+
+    .signature-img {
+      max-height: 42px;
+      width: auto;
+      margin: 1mm auto;
+      display: block;
+    }
+
+    .signature-footer {
+      font-weight: bold;
+      font-size: 8pt;
+      border-top: 1px solid #000000;
+      padding: 0.8mm 0;
+      text-transform: uppercase;
+    }
+
+    /* Footer Strip */
+    .footer-strip-container {
+      margin-top: 2.5mm;
+      width: 100%;
+    }
+
+    .footer-strip-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="invoice-page">
+    <!-- 1. Header Section -->
+    <table class="brand-header">
+      <colgroup>
+        <col style="width: 42%;">
+        <col style="width: 54%;">
+        <col style="width: 4%;">
+      </colgroup>
+      <tr>
+        <td>
+          <img src="{{LOGO_SRC}}" alt="Shree Hari Export House Logo" class="logo-img">
+        </td>
+        <td class="corporate-info">
+          <strong>Corporate Office :</strong><br>
+          {{OFFICE_ADDRESS}}<br>
+          <strong>E-mail :</strong> shreehariexporthouse@gmail.com,&nbsp; osissanitarywares@gmail.com<br>
+          <strong>Web :</strong> {{WEBSITE}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Ph.:</strong> {{OFFICE_NUMBER}}
+        </td>
+        <td>
+          <div class="orange-accent-bar"></div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 2. Master Table -->
+    <table class="master-table">
+      <colgroup>
+        <col style="width: 14%;">
+        <col style="width: 36%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+        <col style="width: 15%;">
+        <col style="width: 15%;">
+      </colgroup>
+      <tbody>
+        <!-- Title Row -->
+        <tr>
+          <td colspan="6" class="title-cell">PACKING LIST</td>
+        </tr>
+
+        <!-- Exporter / Details Block -->
+        <tr>
+          <td colspan="2" class="align-top">
+            <div class="section-label">Exporter:-</div>
+            <div class="bold">{{COMPANY_NAME}}</div>
+            <div class="pre-line">{{COMPANY_ADDRESS}}</div>
+          </td>
+          <td colspan="4" style="padding: 0;" class="align-top">
+            <div class="section-label" style="padding: 0.8mm 1mm; margin-bottom: 0;">Details :-</div>
+            <table class="details-inner-table">
+              <colgroup>
+                <col style="width: 34%;">
+                <col style="width: 66%;">
+              </colgroup>
+              <tr>
+                <td>Invoice No :-</td>
+                <td class="bold">{{INVOICE_NUMBER}}</td>
+              </tr>
+              <tr>
+                <td>Date :-</td>
+                <td>{{INVOICE_DATE}}</td>
+              </tr>
+              <tr>
+                <td>IEC No :-</td>
+                <td>{{IEC_NUMBER}}</td>
+              </tr>
+              <tr>
+                <td>GST No :-</td>
+                <td>{{GST_NUMBER}}</td>
+              </tr>
+              <tr>
+                <td>BIN No :-</td>
+                <td>{{BIN_NUMBER}}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Consignee / Notify Buyer Block -->
+        <tr>
+          <td colspan="2" class="align-top">
+            <div class="section-label">Consignee :-</div>
+            <div class="pre-line">{{CONSIGNEE}}</div>
+          </td>
+          <td colspan="4" class="align-top">
+            <div class="section-label">Notify Buyer :-</div>
+            <div class="bold">{{NOTIFY_BUYER_NAME}}</div>
+            <div>NIT:- {{NOTIFY_BUYER_NIT}}</div>
+            <div>{{NOTIFY_BUYER_GUARD}}</div>
+            <div>{{NOTIFY_BUYER_ADDRESS}}</div>
+            <br>
+            <div class="second-notify-row">
+              <span class="bold">SECOND NOTIFY :- </span>
+              <span>IMPORT EXPORT APOLO LIMITADA ,IQUIQUE</span>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Shipping Details Grid -->
+        <tr>
+          <td class="bold text-center">Port of Loading</td>
+          <td class="bold text-center">Port of Discharge</td>
+          <td colspan="4">
+            <div class="nowrap-cell">
+              <span class="bold">Payment Temrs</span>
+              <span>{{PAYMENT_TERMS}}</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center">{{PORT_OF_LOADING}}</td>
+          <td class="text-center">{{PORT_OF_DISCHARGE}}</td>
+          <td colspan="4">
+            <div class="nowrap-cell">
+              <span class="bold">Export Terms</span>
+              <span>{{EXPORT_TERMS}}</span>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Origin / Destination / HSN Grid -->
+        <tr>
+          <td class="bold text-center">Contry of Origin</td>
+          <td class="bold text-center">Final Destination</td>
+          <td colspan="4">
+            <div class="nowrap-cell">
+              <span class="bold">H.S.N CODE</span>
+              <span>69101000</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center">{{COUNTRY_OF_ORIGIN}}</td>
+          <td class="text-center">{{PORT_OF_DISCHARGE}}</td>
+          <td colspan="4">
+            <div class="nowrap-cell">
+              <span class="bold">PRODCUTS</span>
+              <span>CERAMIC SANITARY WARE</span>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Container Details Grid -->
+        <tr>
+          <td class="bold text-center">Container No.</td>
+          <td class="bold text-center">Line Seal No.</td>
+          <td colspan="2" class="bold text-center">Electronics Seal No .</td>
+          <td colspan="2" class="bold text-center">Container Qauntity</td>
+        </tr>
+        <tr>
+          <td class="text-center">{{CONTAINER_NO}}</td>
+          <td class="text-center">{{LINE_SEAL_NO}}</td>
+          <td colspan="2" class="text-center">{{ELECTRONIC_SEAL_NO}}</td>
+          <td colspan="2" class="text-center">{{CONTAINER_QUANTITY}}</td>
+        </tr>
+
+        <!-- Product Table Header -->
+        <tr class="product-header">
+          <th class="col-pkg">
+            <div style="border-bottom: 1px solid #000; padding: 0.5mm;">No & Kind of</div>
+            <div style="padding: 0.5mm;">Packages</div>
+          </th>
+          <th class="col-desc" style="padding: 0;">
+            <div style="border-bottom: 1px solid #000; padding: 0.5mm;">Description of Goods</div>
+            <div style="padding: 0.5mm;">CERAMIC SANITARY WARE</div>
+          </th>
+          <th colspan="2" style="padding: 0;">
+            <div style="border-bottom: 1px solid #000; padding: 0.5mm;">Quantity</div>
+            <div style="padding: 0.5mm;">(Sets /Pcs)</div>
+          </th>
+          <th class="col-netwt">
+            <div>Net Weight</div>
+            <div style="margin-top: 0.5mm;">in Kg</div>
+          </th>
+          <th class="col-grosswt">
+            <div>Gross Weight</div>
+            <div style="margin-top: 0.5mm;">in Kg</div>
+          </th>
+        </tr>
+
+        <!-- Dynamic Product Rows -->
+        {{PRODUCT_ROWS}}
+
+        <!-- TOTAL PCS Row -->
+        <tr>
+          <td class="bold text-left">TOTAL PCS</td>
+          <td class="bold text-center">{{TOTAL_PCS}}</td>
+          <td style="border-top:none !important; border-bottom: 1px solid #000 !important; border-left: 1px solid #000 !important;"></td>
+          <td style="border-top:none !important; border-bottom: 1px solid #000 !important; border-left: 1px solid #000 !important;"></td>
+          <td style="border-top:none !important; border-bottom: 1px solid #000 !important; border-left: 1px solid #000 !important;"></td>
+          <td style="border-top:none !important; border-bottom: 1px solid #000 !important; border-left: 1px solid #000 !important;"></td>
+        </tr>
+
+        <!-- Summary Totals Row -->
+        <tr>
+          <td colspan="4" class="bold text-right" style="padding-right: 3mm;">TOTAL KG</td>
+          <td class="bold text-center">{{TOTAL_NET_WEIGHT_KG}}</td>
+          <td class="bold text-center">{{TOTAL_GROSS_WEIGHT_KG}}</td>
+        </tr>
+
+        <!-- Declaration & Signature Block -->
+        <tr>
+          <td colspan="4" class="declaration-cell align-top">
+            <div class="dec-bold-header">
+              (WE INTEND TO CLAIM REWARDS UNDER REMISSION OF DUTIES AND TAXES ON EXPORTED PRODUCTS (RODTEP) & DBK
+              DECLARATION ,IF ANY WE HEREBY DECLARE THAT SAME SHALL CLAIM THE BENEFIT AS ADMISSIBLE UNDER CHAPTER 3 OF
+              FTP)
+            </div>
+            <div class="bold" style="margin: 1.5mm 0;">
+              SUPPLY MEANT FOR EXPORT UNDER BOND WITHOUT PAYMENT OF INTEGRATED TAX [IGST]
+            </div>
+            <div>LUT NO :AD2403250559720 24/03/2025</div>
+            <div>We availing Input tax Credit of The Central Goods and Service Tax</div>
+          </td>
+          <td colspan="2" style="padding: 0;" class="align-top">
+            <div class="signature-box">
+              <div class="signature-company-title">{{COMPANY_NAME}}</div>
+              <img src="{{SIGNATURE_SRC}}" alt="Signature" class="signature-img">
+              <div class="signature-footer">AUTHORISED SIGNATORY</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Bottom Certification Strip -->
+    <div class="footer-strip-container">
+      <img src="{{FOOTER_SRC}}" alt="Footer Strip" class="footer-strip-img">
+    </div>
+  </div>
+</body>
+
+</html>
