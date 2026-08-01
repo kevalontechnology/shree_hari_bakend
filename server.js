@@ -23,6 +23,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://shree-hari-frontend.onrender.com',
   'https://sh-7wsb.onrender.com',
+  'https://shree-hari-bakendx.onrender.com',
 ];
 app.use(cors({
   origin: function (origin, callback) {
