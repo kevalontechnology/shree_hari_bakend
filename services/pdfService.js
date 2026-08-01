@@ -4,7 +4,7 @@ const chromium = require('@sparticuz/chromium');
 async function generatePdfFromHtml(htmlContent) {
   let browser = null;
   try {
-    // Optional: force graphics headless mode for Linux server compatibility
+    // Force graphics headless mode for Linux server compatibility
     chromium.setHeadlessMode = true;
     chromium.setGraphicsMode = false;
 
@@ -20,7 +20,12 @@ async function generatePdfFromHtml(htmlContent) {
     });
 
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    
+    // Use domcontentloaded to prevent freezing on dead external links/images
+    await page.setContent(htmlContent, { 
+      waitUntil: 'domcontentloaded',
+      timeout: 30000 
+    });
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
