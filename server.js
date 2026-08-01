@@ -24,6 +24,7 @@ const allowedOrigins = [
   'https://shree-hari-frontend.onrender.com',
   'https://sh-7wsb.onrender.com',
   'https://shree-hari-bakendx.onrender.com',
+  'https://shree-hari-xs0u.onrender.com/',
 ];
 app.use(cors({
   origin: function (origin, callback) {
