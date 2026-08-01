@@ -1,8 +1,7 @@
-const puppeteer = require('puppeteer');
-const { generateInrInvoicePdf } = require('../services/pdfService');
-const { renderVgmHtml } = require('../templates/vgmTemplate');
 const puppeteer = require('puppeteer-core');
 const chromium = require('@sparticuz/chromium');
+const { generateInrInvoicePdf } = require('../services/pdfService');
+const { renderVgmHtml } = require('../templates/vgmTemplate');
 
 const browser = await puppeteer.launch({
   args: chromium.args,
