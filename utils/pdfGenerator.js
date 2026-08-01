@@ -5,10 +5,15 @@ const { renderVgmHtml } = require('../templates/vgmTemplate');
 
 // Helper to safely launch Puppeteer on Render cloud environments
 async function getBrowser() {
+  chromium.setHeadlessMode = true;
+  chromium.setGraphicsMode = false;
+
+  const executablePath = await chromium.executablePath();
+
   return await puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
+    executablePath: executablePath,
     headless: chromium.headless,
     ignoreHTTPSErrors: true,
   });
@@ -103,7 +108,7 @@ const generatePackagingListPDF = async (shipment, exporter) => {
       </style>
     </head>
     <body>
-      <table className="master-table">
+      <table class="master-table">
         <tr><td colspan="6" class="document-title">PACKING LIST</td></tr>
         <tr>
           <td colspan="3" style="width: 50%;">
@@ -132,25 +137,26 @@ const generatePackagingListPDF = async (shipment, exporter) => {
     </html>
   `;
 
-  const browser = await getBrowser();
-  const page = await browser.newPage();
-  await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-  const pdfBuffer = await page.pdf({
-    format: "A4",
-    printBackground: true,
-    margin: { top: "10mm", bottom: "10mm", left: "10mm", right: "10mm" },
-  });
-  await browser.close();
-  return pdfBuffer;
+  let browser = null;
+  try {
+    browser = await getBrowser();
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: { top: "10mm", bottom: "10mm", left: "10mm", right: "10mm" },
+    });
+    return pdfBuffer;
+  } finally {
+    if (browser !== null) await browser.close();
+  }
 };
 
 // ---------------------------------------------------------
 // 3. ANNEXURE PDF GENERATOR
 // ---------------------------------------------------------
 const generateAnnexurePDF = async (shipment, exporter) => {
-  const containers = shipment?.containers || [];
-  const products = shipment?.products || [];
-  const manufacturerDetails = shipment?.manufacturerDetails || {};
   const exporterData = {
     ...exporter,
     ...(shipment?.exporterDetails || {}),
@@ -167,30 +173,9 @@ const generateAnnexurePDF = async (shipment, exporter) => {
     </html>
   `;
 
-  const browser = await getBrowser();
-  const page = await browser.newPage();
-  await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-  const pdfBuffer = await page.pdf({
-    format: "A4",
-    printBackground: true,
-    margin: { top: "0mm", bottom: "0mm", left: "0mm", right: "0mm" },
-  });
-  await browser.close();
-  return pdfBuffer;
-};
-
-// ---------------------------------------------------------
-// 4. VGM PDF GENERATOR
-// ---------------------------------------------------------
-const generateVGMPDF = async (shipment, exporter) => {
+  let browser = null;
   try {
-    const renderPayload = {
-      ...(shipment ? (typeof shipment.toObject === 'function' ? shipment.toObject() : shipment) : {}),
-      exporter: exporter || {}
-    };
-    const htmlContent = renderVgmHtml(renderPayload);
-    
-    const browser = await getBrowser();
+    browser = await getBrowser();
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
     const pdfBuffer = await page.pdf({
@@ -198,11 +183,38 @@ const generateVGMPDF = async (shipment, exporter) => {
       printBackground: true,
       margin: { top: "0mm", bottom: "0mm", left: "0mm", right: "0mm" },
     });
-    await browser.close();
+    return pdfBuffer;
+  } finally {
+    if (browser !== null) await browser.close();
+  }
+};
+
+// ---------------------------------------------------------
+// 4. VGM PDF GENERATOR
+// ---------------------------------------------------------
+const generateVGMPDF = async (shipment, exporter) => {
+  let browser = null;
+  try {
+    const renderPayload = {
+      ...(shipment ? (typeof shipment.toObject === 'function' ? shipment.toObject() : shipment) : {}),
+      exporter: exporter || {}
+    };
+    const htmlContent = renderVgmHtml(renderPayload);
+    
+    browser = await getBrowser();
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: { top: "0mm", bottom: "0mm", left: "0mm", right: "0mm" },
+    });
     return pdfBuffer;
   } catch (err) {
     console.error("Error in generateVGMPDF:", err);
     throw err;
+  } finally {
+    if (browser !== null) await browser.close();
   }
 };
 

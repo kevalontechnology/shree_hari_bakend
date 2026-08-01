@@ -2,29 +2,43 @@ const puppeteer = require('puppeteer-core');
 const chromium = require('@sparticuz/chromium');
 
 async function generatePdfFromHtml(htmlContent) {
+  let browser = null;
   try {
-    const execPath = typeof chromium.executablePath === 'function' 
-      ? await chromium.executablePath() 
-      : await chromium.executablePath;
+    // Optional: force graphics headless mode for Linux server compatibility
+    chromium.setHeadlessMode = true;
+    chromium.setGraphicsMode = false;
 
-    const browser = await puppeteer.launch({
+    // Get the Chromium binary executable path safely
+    const executablePath = await chromium.executablePath();
+
+    browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: execPath,
+      executablePath: executablePath,
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
 
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-    
-    await browser.close();
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '0mm', bottom: '0mm', left: '0mm', right: '0mm' }
+    });
+
     return pdfBuffer;
   } catch (error) {
-    console.error("Puppeteer Launch Error in pdfService:", error);
+    console.error("❌ Puppeteer Launch Error in pdfService:", error);
     throw error;
+  } finally {
+    if (browser !== null) {
+      await browser.close();
+    }
   }
 }
 
-module.exports = { generatePdfFromHtml };
+module.exports = {
+  generatePdfFromHtml
+};
