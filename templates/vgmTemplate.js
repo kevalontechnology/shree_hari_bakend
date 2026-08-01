@@ -365,20 +365,18 @@ function renderVgmHtml(data = {}) {
       <div class="signature-container">
         <div class="signature-flex">
           <div class="date-row">
-            DATE &nbsp; ${invoiceDate}
+            <div>DATE: ${invoiceDate}</div>
           </div>
-
           <div class="sig-right">
-            <div class="sig-title">Signature of Authorized Person of Shipper</div>
-            ${signatureBase64 ? `<img src="${signatureBase64}" alt="Signature" class="sig-img">` : `
-              <div class="sig-company">${companyName}</div>
-              <div class="sig-name-sub">K. v. Patel</div>
-              <div class="sig-partner">Partner</div>
-            `}
-            <div style="font-size: 8.5pt; margin-top: 2mm;">Name- ${shipperAuthorizedName}</div>
+            <div class="sig-title">SIGNATURE OF SHIPPERS / AUTHORIZED REPRESENTATIVE</div>
+            ${signatureBase64 ? `<img src="${signatureBase64}" alt="Signature" class="sig-img">` : ''}
+            <div class="sig-company">${companyName}</div>
+            <div class="sig-name-sub">K. V. PATEL</div>
+            <div class="sig-partner">PARTNER</div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </body>
@@ -388,5 +386,6 @@ function renderVgmHtml(data = {}) {
 }
 
 module.exports = {
-  renderVgmHtml
+  renderVgmHtml,
+  escapeHtml
 };
