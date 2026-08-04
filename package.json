@@ -31,5 +31,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
+  },
+  "overrides": {
+    "yargs": "^18.0.0"
   }
 }

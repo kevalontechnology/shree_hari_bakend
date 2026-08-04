@@ -42,10 +42,12 @@ router.put('/:id/read', async (req, res) => {
   }
 });
 
-// 🔥 1. Delete ALL notifications (આ રૂટ અહીં ઉમેર્યો છે)
+// =================================================================
+// 1. DELETE ALL NOTIFICATIONS (This MUST come before /:id)
+// =================================================================
 router.delete('/delete-all', async (req, res) => {
   try {
-    await Notification.deleteMany({}); // MongoDB ના બધા જ ડેટા ડીલીટ કરશે
+    await Notification.deleteMany({}); // MongoDB 
     res.json({ message: 'All notifications deleted successfully.' });
   } catch (error) {
     console.error('Error deleting all notifications:', error);
@@ -53,7 +55,9 @@ router.delete('/delete-all', async (req, res) => {
   }
 });
 
-// 2. Delete a single notification (આની ઉપર delete-all હોવું જ જોઈએ)
+// =================================================================
+// 2. DELETE SINGLE NOTIFICATION (This MUST come after /delete-all)
+// =================================================================
 router.delete('/:id', async (req, res) => {
   try {
     const notification = await Notification.findByIdAndDelete(req.params.id);

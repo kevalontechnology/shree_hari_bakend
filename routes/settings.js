@@ -4,17 +4,17 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// IMPORTANT: We only import these ONCE at the very top!
-const { Buyer, Manufacturer, Port, Exporter, Product, RangeData } = require('../models/ReferenceData');
+// Added Bank to the imports
+const { Buyer, Manufacturer, Port, Exporter, Product, RangeData, Bank } = require('../models/ReferenceData');
 const Notification = require('../models/Notification');
 
-// 1. AUTOMATICALLY CREATE UPLOADS FOLDER IF IT IS MISSING
+// AUTOMATICALLY CREATE UPLOADS FOLDER IF IT IS MISSING
 const uploadDir = 'uploads/';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// 2. Configure Multer Storage for Images
+// Configure Multer Storage for Images
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadDir); 
@@ -26,8 +26,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // ======================== EXPORTER (CRUD + SETTINGS) ========================
-
-// GET all exporters (for the list view)
 router.get('/exporters', async (req, res) => {
   try {
     const exporters = await Exporter.find();
@@ -37,7 +35,6 @@ router.get('/exporters', async (req, res) => {
   }
 });
 
-// GET single exporter (backward compatibility for MasterForm)
 router.get('/exporter', async (req, res) => {
   try {
     const exporter = await Exporter.findOne();
@@ -47,7 +44,6 @@ router.get('/exporter', async (req, res) => {
   }
 });
 
-// POST new exporter
 router.post('/exporter', upload.fields([
   { name: 'logoImage', maxCount: 1 }, 
   { name: 'footerImage', maxCount: 1 },
@@ -69,7 +65,6 @@ router.post('/exporter', upload.fields([
     const exporter = new Exporter(exporterData);
     await exporter.save();
     
-    // Add Notification
     try {
       await Notification.create({
         title: 'New Exporter Added',
@@ -77,14 +72,13 @@ router.post('/exporter', upload.fields([
         type: 'master'
       });
     } catch (notifErr) { console.error('Failed to create notification:', notifErr); }
-
+    
     res.status(201).json({ message: 'Exporter created successfully', exporter });
   } catch (error) {
     res.status(500).json({ message: 'Failed to create exporter', error: error.message });
   }
 });
 
-// PUT update existing exporter (backward compatibility & explicit ID)
 const updateExporterHandler = async (req, res) => {
   try {
     const exporterData = { ...req.body }; 
@@ -99,7 +93,6 @@ const updateExporterHandler = async (req, res) => {
         exporterData.signatureImage = `/uploads/${req.files['signatureImage'][0].filename}`;
       }
     }
-
     let exporter;
     if (req.params.id) {
       exporter = await Exporter.findByIdAndUpdate(req.params.id, exporterData, { new: true });
@@ -130,7 +123,6 @@ router.put('/exporter', upload.fields([
   { name: 'signatureImage', maxCount: 1 }
 ]), updateExporterHandler);
 
-// DELETE exporter
 router.delete('/exporter/:id', async (req, res) => {
   try {
     const deletedExporter = await Exporter.findByIdAndDelete(req.params.id);
@@ -143,7 +135,7 @@ router.delete('/exporter/:id', async (req, res) => {
         type: 'master'
       });
     } catch (notifErr) { console.error('Failed to create notification:', notifErr); }
-
+    
     res.json({ message: 'Exporter deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting exporter' });
@@ -154,7 +146,6 @@ router.delete('/exporter/:id', async (req, res) => {
 router.post('/buyer', async (req, res) => {
   try {
     const newBuyer = await Buyer.create(req.body);
-    
     try {
       await Notification.create({
         title: 'New Buyer Added',
@@ -162,7 +153,6 @@ router.post('/buyer', async (req, res) => {
         type: 'master'
       });
     } catch (notifErr) { console.error('Failed to create notification:', notifErr); }
-
     res.status(201).json(newBuyer);
   } catch (error) {
     res.status(500).json({ message: 'Error adding buyer', error: error.message });
@@ -205,12 +195,10 @@ router.delete('/buyer/:id', async (req, res) => {
   }
 });
 
-
 // ======================== MANUFACTURER CRUD ========================
 router.post('/manufacturer', async (req, res) => {
   try {
     const newManuf = await Manufacturer.create(req.body);
-    
     try {
       await Notification.create({
         title: 'New Manufacturer Added',
@@ -218,7 +206,6 @@ router.post('/manufacturer', async (req, res) => {
         type: 'master'
       });
     } catch (notifErr) { console.error('Failed to create notification:', notifErr); }
-
     res.status(201).json(newManuf);
   } catch (error) {
     res.status(500).json({ message: 'Error adding manufacturer', error: error.message });
@@ -261,49 +248,14 @@ router.delete('/manufacturer/:id', async (req, res) => {
   }
 });
 
-
-// ======================== PRODUCT CRUD ========================
-// router.post('/product', async (req, res) => {
-//   try {
-//     const newProduct = await Product.create(req.body);
-//     res.status(201).json(newProduct);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error adding product', error: error.message });
-//   }
-// });
-
-// router.get('/products', async (req, res) => {
-//   try {
-//     const products = await Product.find();
-//     res.json(products);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error fetching products' });
-//   }
-// });
-
-// router.put('/product/:id', async (req, res) => {
-//   try {
-//     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-//     res.json(updated);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error updating product' });
-//   }
-// });
-
-// router.delete('/product/:id', async (req, res) => {
-//   try {
-//     await Product.findByIdAndDelete(req.params.id);
-//     res.json({ message: 'Product deleted' });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error deleting product' });
-//   }
-// });
-
-
-// ======================== PRODUCT CRUD ========================
-router.post('/product', async (req, res) => {
+// ======================== PRODUCT CRUD (UPDATED WITH MULTER) ========================
+router.post('/product', upload.single('productImage'), async (req, res) => {
   try {
-    const newProduct = await Product.create(req.body);
+    const productData = { ...req.body };
+    if (req.file) {
+      productData.productImage = `/uploads/${req.file.filename}`;
+    }
+    const newProduct = await Product.create(productData);
     try {
       await Notification.create({
         title: 'New Product Added',
@@ -326,9 +278,13 @@ router.get('/products', async (req, res) => {
   }
 });
 
-router.put('/product/:id', async (req, res) => {
+router.put('/product/:id', upload.single('productImage'), async (req, res) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const productData = { ...req.body };
+    if (req.file) {
+      productData.productImage = `/uploads/${req.file.filename}`;
+    }
+    const updated = await Product.findByIdAndUpdate(req.params.id, productData, { new: true });
     res.json(updated);
   } catch (error) {
     res.status(500).json({ message: 'Error updating product' });
@@ -352,7 +308,6 @@ router.delete('/product/:id', async (req, res) => {
     res.status(500).json({ message: 'Error deleting product' });
   }
 });
-
 
 // ======================== PORT CRUD ========================
 router.post('/port', async (req, res) => {
@@ -407,26 +362,9 @@ router.delete('/port/:id', async (req, res) => {
   }
 });
 
-// Add this to routes/settings.js
-// router.post('/range', async (req, res) => {
-//   try {
-//     const newRange = await RangeData.create(req.body);
-//     res.status(201).json(newRange);
-//   } catch (error) { res.status(500).json({ error: error.message }); }
-// });
-
-// router.get('/ranges', async (req, res) => {
-//   try {
-//     const ranges = await RangeData.find();
-//     res.json(ranges);
-//   } catch (error) { res.status(500).json({ error: error.message }); }
-// });
-
-
 // ======================== RANGE CRUD ========================
 router.post('/range', async (req, res) => {
   try {
-    console.log("Received Range Data:", req.body);
     const newRange = await RangeData.create(req.body);
     try {
       await Notification.create({
@@ -436,9 +374,8 @@ router.post('/range', async (req, res) => {
       });
     } catch(e) {}
     res.status(201).json(newRange);
-  } catch (error) { 
-    console.error("DEBUG - Range POST Error:", error); 
-    res.status(500).json({ error: error.message }); 
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -446,12 +383,11 @@ router.get('/ranges', async (req, res) => {
   try {
     const ranges = await RangeData.find();
     res.json(ranges);
-  } catch (error) { 
-    // ADD THIS LOG:
-    console.error("CRITICAL ERROR IN /ranges:", error); 
-    res.status(500).json({ error: error.message }); 
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
+
 router.put('/range/:id', async (req, res) => {
   try {
     const updated = await RangeData.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -472,6 +408,55 @@ router.delete('/range/:id', async (req, res) => {
       } catch(e) {}
     }
     res.json({ message: 'Deleted' });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ======================== BANK CRUD (NEW) ========================
+router.post('/bank', async (req, res) => {
+  try {
+    const newBank = await Bank.create(req.body);
+    try {
+      await Notification.create({
+        title: 'New Bank Added',
+        message: `Bank ${req.body.bankName || 'New Bank'} has been added to master data.`,
+        type: 'master'
+      });
+    } catch(e) {}
+    res.status(201).json(newBank);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/banks', async (req, res) => {
+  try {
+    const banks = await Bank.find();
+    res.json(banks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/bank/:id', async (req, res) => {
+  try {
+    const updated = await Bank.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updated);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.delete('/bank/:id', async (req, res) => {
+  try {
+    const bank = await Bank.findByIdAndDelete(req.params.id);
+    if (bank) {
+      try {
+        await Notification.create({
+          title: 'Bank Deleted',
+          message: `Bank ${bank.bankName || 'Unknown'} was removed from master data.`,
+          type: 'master'
+        });
+      } catch(e) {}
+    }
+    res.json({ message: 'Bank deleted successfully' });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 

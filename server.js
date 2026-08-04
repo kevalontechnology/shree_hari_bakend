@@ -15,7 +15,9 @@ const notificationRoutes = require("./routes/notifications");
 const errorHandler = require("./middleware/errorMiddleware");
 const uploadRoutes = require("./routes/uploadRoutes");
 const masterFormRoutes = require("./routes/masterFormRoutes");
+const paymentRoutes = require('./routes/payments');
 const pdfRoutes = require("./routes/pdfRoutes");
+const reportRoutes = require('./routes/reports');
 const app = express();
 
 // Middleware
@@ -57,6 +59,8 @@ app.use("/api/upload", uploadRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(errorHandler);
 app.use('/api/proforma-invoice', require('./routes/proformaInvoice'));
+app.use('/api/payments', paymentRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Database Connection & Server Start
 const PORT = process.env.PORT || 5000;
