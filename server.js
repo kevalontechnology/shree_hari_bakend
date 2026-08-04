@@ -56,6 +56,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(errorHandler);
+app.use('/api/proforma-invoice', require('./routes/proformaInvoice'));
 
 // Database Connection & Server Start
 const PORT = process.env.PORT || 5000;
